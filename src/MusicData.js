@@ -41,5 +41,21 @@ export const songs = [
     artwork: require('../src/images/img7.png'),
     url: require('../src/music/musice7.mp3')
   },
+  {
+    title: 'song8',
+    singer: 'mno',
+    artwork: require('../src/images/img8.png'),
+    url: require('../src/music/240_full_angry-hits-logo_0009_preview.mp3')
+  }, {
+    title: 'song9',
+    singer: 'mno',
+    artwork: require('../src/images/img9.png'),
+    url: require('../src/music/240_full_disbelief-logo_0010_preview.mp3')
+  }, {
+    title: 'song10',
+    singer: 'mno',
+    artwork: require('../src/images/img10.png'),
+    url: require('../src/music/240_full_sled-race-logo_0011_preview.mp3')
+  }
 
 ]

@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: '#fff',
+    backgroundColor: 'grey',
     width: '100%',
-    elevation: 5,
+    // elevation: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },

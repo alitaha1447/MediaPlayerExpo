@@ -5,14 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { songs } from '../MusicData';
 import { AppContext } from '../AppProvider';
 
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
 
 const MusicDetailPage = ({ route }) => {
-  const { playSound, currentUrl, isPlaying } = useContext(AppContext);
+  const { playSound, currentUrl, isPlaying, playbackPosition, playbackDuration } = useContext(AppContext);
   const { index } = route.params;
   const { data } = route.params;
   const [currentSong, setCurrentSong] = useState(index);
-
   const ref = useRef();
 
   useEffect(() => {
@@ -25,7 +24,12 @@ const MusicDetailPage = ({ route }) => {
 
   }, []);
 
-
+  const formatTime = (time) => {
+    if (!time) return "0:00";
+    const minutes = Math.floor(time / 60000);
+    const seconds = ((time % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
 
   const handleSong = (currentSong) => {
     playSound(songs[currentSong].url)
@@ -54,14 +58,29 @@ const MusicDetailPage = ({ route }) => {
           if (newIndex !== currentSong) {
             setCurrentSong(newIndex);
             handleSong(newIndex); // Play the new song
+          } else {
+            console.log('equal')
           }
         }}
       />
-      {/* <Image source={data.artwork} style={styles.banner} /> */}
+
       <View style={styles.controls}>
-        <Slider style={styles.sliderView} />
+        <Slider
+          style={styles.sliderView}
+          minimumValue={0}
+          maximumValue={1}
+          value={playbackPosition && playbackDuration ? playbackPosition / playbackDuration : 0}
+          maximumTrackTintColor="#FFFFFF"
+          minimumTrackTintColor="#000000"
+        />
+        {/* progress duration */}
+        <View style={styles.progressLevelDuration}>
+          <Text style={styles.progressLevelText}>{playbackPosition ? formatTime(playbackPosition) : "0:00"}</Text>
+          <Text style={styles.progressLevelText}>{playbackDuration ? formatTime(playbackDuration) : "0:00"}</Text>
+        </View>
         <Text>{currentSong}</Text>
         <View style={styles.btnArea}>
+          {/* previous button */}
           <TouchableOpacity onPress={() => {
             if (currentSong - 1 >= 0) {
               setCurrentSong(currentSong - 1);
@@ -73,11 +92,12 @@ const MusicDetailPage = ({ route }) => {
           }
           } disabled={currentSong === 0}>
             <Icon name="skip-previous" size={70} color={currentSong === 0 ? '#ccc' : '#FFFFFF'} style={{ opacity: currentSong === 0 ? 0.3 : 1 }} />
-
           </TouchableOpacity>
+          {/* play/pause button */}
           <TouchableOpacity onPress={() => handleSong(currentSong)} >
             <Icon name={currentUrl === songs[currentSong].url && isPlaying ? 'pause' : 'play-arrow'} size={70} color="#FFFFFF" />
           </TouchableOpacity>
+          {/* next button */}
           <TouchableOpacity onPress={() => {
             if (songs.length - 1 > currentSong) {
               setCurrentSong(currentSong + 1);
@@ -88,8 +108,8 @@ const MusicDetailPage = ({ route }) => {
             }
           }} disabled={currentSong === songs.length - 1}>
             <Icon name="skip-next" size={70} color={currentSong === songs.length - 1 ? '#ccc' : '#FFFFFF'} style={{ opacity: currentSong === songs.length - 1 ? 0.3 : 1 }} />
-
           </TouchableOpacity>
+
         </View>
       </View>
     </View>
@@ -131,6 +151,15 @@ const styles = StyleSheet.create({
   sliderView: {
     width: '90%',
     alignSelf: 'center',
+  },
+  progressLevelDuration: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  progressLevelText: {
+    color: 'white',
+    marginHorizontal: 30
   },
   btnArea: {
     flexDirection: 'row',
